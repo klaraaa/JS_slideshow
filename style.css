@@ -1,0 +1,111 @@
+.nodecontainer{
+	width: 100%;
+}
+
+.divnode{
+	display: inline-block;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+img{
+	width: 100px;
+}
+
+.test{
+	display: inline;
+}
+
+#slideshow{
+	text-align: center;
+}
+
+#slideshow img{
+	width: 80%;
+}
+.container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  
+  -webkit-flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.item {
+  background: tomato;
+  padding: 15px;
+  margin-top: 10px;
+  color: white;
+  font-size: 1em;
+  flex-basis: 0;
+  flex-grow: 1;
+  border-radius: 12px 12px 12px 12px;
+  margin:5px 5px 5px 5px;
+}
+
+.navigation {
+  list-style: none;
+  margin: 0;
+  background: deepskyblue;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  justify-content: flex-end;
+}
+
+@media all and (max-width: 800px) {
+
+}
+
+@media all and (max-width: 600px) {
+
+}
+
+p, h1{
+	font-family: sans-serif;
+}
+
+label{
+	font-family: sans-serif;
+	display: block;
+}
+
+input[type=text]{
+	border:0;
+	border-bottom:2px dotted white;
+	margin-bottom: 2px;
+	margin-top:5px;
+    background-color: transparent;
+    color: black;
+    height: 28px;
+    padding-left:10px;
+    width: 191px;
+    box-shadow: none;
+}
+input[type=button]{
+    background-color: #1E1E1E;
+    color: #979797;
+    height: 24px;
+    width: 103px;
+    color: #bbbbbb;
+    text-transform:uppercase;
+    box-shadow:none;
+}
+
+input[type=button], input[type=text]{
+    /* border-radius:5px; */
+    display: block;
+    width: 98%;
+    margin-right: 5px;
+    font-family: Sansation,Arial;
+}

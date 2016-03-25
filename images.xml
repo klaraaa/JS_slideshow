@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="images.xsl"?>
+<images>
+<image id="0"><path>uploads/desert.jpg</path><caption>Desert</caption><date>2015</date></image><image id="1"><path>uploads/rainbow.jpg</path><caption>Rainbow</caption><date>2016</date></image><image id="2"><path>uploads/stairs.jpg</path><caption>Stairs</caption><date>2017</date></image><image id="3"><path>uploads/woods.jpg</path><caption>Woods</caption><date>2018</date></image></images>
