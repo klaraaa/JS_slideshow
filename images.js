@@ -21,7 +21,7 @@ function parseXML() {
 	var xml = ajax.responseXML;
 	var images = xml.getElementsByTagName("image");	
 	var imglista = document.getElementById("bildlista");
-	//trace("images är: " + images); trace("imglista: " + imglista);
+	trace("images är: " + images); trace("imglista: " + imglista);
 	thumbs(images, imglista);	/* FELSÖK try {thumbs(images);}catch(err) {console.log("Fel i for-loopen där thumbnail-bilder hämtas från xml till JS. Felet är " + err);}*/
 } //close parseXML function
 	
