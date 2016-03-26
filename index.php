@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>Assignment 2 - JS</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<?php require ('images.php'); ?>
+	<?php require 'images.php'; ?>
 	<?php addImg(); ?>
 </head>
 <body>
