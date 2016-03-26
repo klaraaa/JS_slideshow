@@ -1,14 +1,4 @@
 <?php
-function tester($test, $debug = false){
-	if ($debug === true) {
-		echo $test;
-	}
-}
-
-
-
-
-
 // gets XML:
 class XML{
 	private static $xml;
@@ -48,6 +38,11 @@ class XML{
 	}
 }//close XML class
 
+function tester($test, $debug = false){
+	if ($debug === true) {
+		echo $test;
+	}
+}
 
 function addImg(){
 	$xml = XML::getXML();
@@ -58,33 +53,31 @@ function addImg(){
 		//var_dump($_FILES);
 		$target_folder = "uploads/";
 		$target_name = $target_folder.basename($_FILES["min_bild"]["name"]);
-		$type = pathinfo($target_name, PATHINFO_EXTENSION);
-		
+
 		if (file_exists($target_name)) {
 			echo "Use another filename";
 			exit;
 		}
 
-		if ($_FILES["min_bild"]["size"] > 10000000) {
+		if ($_FILES["min_bild"]["size"] > 10000) {
 			echo "För stor fil.";
 			exit;
 		}
 
+		$type = pathinfo($target_name, PATHINFO_EXTENSION);
 		if ($type != "jpg") {
 			echo "Du får bara lägga upp jpg";
 			exit;
 		}
-
 		if (move_uploaded_file($_FILES["min_bild"]["tmp_name"], $target_name)) {
 			echo "Upload done!";
 		}else{
 			echo "Upload went wrong!";
 		}
-		
-		$path = $target_name;
-		tester("path är: ".$path);
-	}// Lägg till KONTROLL av det som laddats upp eventuellt
+	}
 
+	$path = $target_name;
+	tester("path är: ".$path);
 	if (isset($_POST["add_image"])) {
 		$new_item = $sxe->addChild("image"); //ny nod, child till images. <image></image>
 		$new_item->addChild("path", $path);	//ny child till image  <path>VÄRDE</path>
@@ -92,14 +85,9 @@ function addImg(){
 		$new_item->addChild("date", $_POST["date"]); //ny child till image  <date>VÄRDE</date>
 		$new_item->addAttribute("id", $items); //nytt attribut till image. id="int från items"
 		$sxe->asXML("images.xml"); //lägg nya noden som xml i images.xml
-	}
+	}// skapa kontroll för det som laddats upp
 	/* FEL/tester
-		$i = 1;
-		while($i <= $items) {
-			tester("The number is: $i <br>");
-			$i++;
-		}
-		tester("Antal: ".$items); //inten som vi la som id på nya image-noden
+		$i = 1; while($i <= $items) { tester("The number is: $i <br>"); $i++;} tester("Antal: ".$items); //inten som vi la som id på nya image-noden
 		//för o lägga till
 		$node = $xml->xpath("image[@id='123']");
 		tester("Ny node: ".$node);
@@ -107,8 +95,8 @@ function addImg(){
 		//för o ta bort
 		unset($sxe->xpath("image[@id='123']")[0]->{0});
 	*/
-
-	}//close addImg
+}//close addImg
+	
 
 function printNodes(){
 	$xml = XML::getXML();
@@ -118,7 +106,6 @@ function printNodes(){
 		// OBS! nod-ID är statiskt nu, ändra sedan
 		// $nodeId = $sxe->image[0]->attributes();
 		// tester("<br>Node id, int från nods id: ".$nodeId);
-
 		$string = "<div class='nodecontainer container'>";
 		foreach ($sxe as $image) {
 			$string .= "<div class='item divnode'><img id='"
