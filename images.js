@@ -1,85 +1,188 @@
-/* FELSÖKNING */
+/* DEBUG: */
 "use strict";
-var debugging = true; function trace(msg) {if (debugging) {console.log(msg);}}
+var debugging = false; function trace(msg) {if (debugging) {console.log(msg);}}
 
-
-// AJAX
+// Setting global variables:
+var currentID = 0;
+var xml;
+var images;
 var ajax = new XMLHttpRequest();
+var timer;
+
+// Testing variables:
+trace("currentID är inledningsvis: " + currentID);
+
+
 ajax.onreadystatechange = function() {
 	if (ajax.readyState == 4 && ajax.status == 200) {
-		//generera XML-svar:
+		
+		// eventlistener calling previmg
+		document.getElementById("prevBTN").addEventListener("click", function(){
+			event.preventDefault();
+			prevImg();
+		}, false);
+
+		// eventlistener calling nextimg
+		document.getElementById("nextBTN").addEventListener("click", function(){
+			event.preventDefault();
+			nextImg();
+		}, false);
+				
+		// eventlistener calls previmg/ nextimg depending on keycode
+		document.addEventListener("keydown", function(){
+			if (event.keyCode === 37) {
+				prevImg();
+			}
+			if (event.keyCode === 39) {
+				nextImg();
+			}
+		}, false);
+
+		// eventlistener calling play
+		document.getElementById("playBTN").addEventListener("click", function(){
+			event.preventDefault();
+			play();
+		}, false);
+
+		// eventlistener calling pause
+		document.getElementById("pauseBTN").addEventListener("click", function(){
+			event.preventDefault();
+			pause();
+		}, false);
+
+		// eventlistener calling slide
+		document.getElementById("slideshowimg").addEventListener("click", function(){
+			event.preventDefault();
+			slide();
+		}, false);
+
+		/*
+		DEBUG:
+		try{parseXML();} catch(err){console.log("parseXML() gick fel! " + err);}
+		*/
+		
 		parseXML();
-		//trace("OK, fil inladdad"); try{parseXML();} catch(err){console.log("parseXML() gick fel! " + err);}
+		trace("OK, fil inladdad");
+		displayCurrentID();
 	}
 }
+
+
 ajax.open("GET", "images.xml", true);
 ajax.send();
 
 
-//XML-content
+// Collects XML-content
 function parseXML() {
-	var xml = ajax.responseXML;
-	var images = xml.getElementsByTagName("image");	
-	var imglista = document.getElementById("bildlista");
-	trace("images är: " + images); trace("imglista: " + imglista);
-	thumbs(images, imglista);	/* FELSÖK try {thumbs(images);}catch(err) {console.log("Fel i for-loopen där thumbnail-bilder hämtas från xml till JS. Felet är " + err);}*/
-} //close parseXML function
+	xml = ajax.responseXML;
+	images = xml.getElementsByTagName("image");	
+	trace("images är: " + images);
+	thumbs();
+	
+	/*
+	DEBUG:
+	try {thumbs(images);}
+	catch(err)
+	{console.log("Fel från thumbnail-loopen. Felet är " + err);}
+	*/
+}
 	
 
-function thumbs(images, imglista) {
+function thumbs() {
 	var imageLiHTMLResult = "";
 	for (var i = images.length - 1; i >= 0; i--) {
-		//trace("images[i] loopen är nu på: "); trace(images[i]);
 		var path = images[i].children[0].innerHTML;
 		var caption = images[i].children[1].innerHTML;
 		var date = images[i].children[2].innerHTML;
-		//trace("Loopad image child html path: " + path + " i är nu: " + i);
+		trace("Loopad image path: " + path + " i är nu: " + i);
 		imageLiHTMLResult += "<img id='" + i + "' class='XMLthumb' src='" + path + "'><p>" + caption + ", " + date + "</p>";
-		imglista.innerHTML = imageLiHTMLResult;
+		document.getElementById("bildlista").innerHTML = imageLiHTMLResult;
 	}
-	//trace("Image child html i global var path: " + path); trace("Detta är den nya imageLiHTMLResult: " + imageLiHTMLResult);
-	thumbListeners(imglista); /* FELSÖK try {thumbListeners(imglista);}catch(err) {console.log("Fel i for-loopen där event listeners lades till. Felet är " + err);}*/
-}//close thumbs function
+
+	trace("imageLiHTMLResult är: " + imageLiHTMLResult);
+	thumbListeners();
+	
+	/*
+	DEBUG:
+	try {thumbListeners();}
+	catch(err)
+	{console.log("Fel från thumbnail-loopen. Felet är " + err);}
+	*/
+}
 
 
 function thumbListeners(){
 	var thumbs = document.getElementsByClassName('XMLthumb');
-	for (var i = thumbs.length - 1; i >= 0; i--) {
-		thumbs[i].addEventListener("click", show);
+	
+	// Add listener to thumbs onclick, update currentID to clicked image's ID.
+	for (var i = thumbs.length-1; i >= 0; i--) {
+		thumbs[i].addEventListener("click", function(){
+			currentID = event.srcElement.id;
+			displayCurrentID();
+		});
 	}
-}//close thumbListeners
+}
 
 
-function show(event){
-	trace("Du klickade på ElementsByClassName('XMLthumb') som startade show-funktionen: " + event);
-	var imgId = event.srcElement.attributes[0].value;
-	var path = event.srcElement.attributes[2].value;
-	// trace(event); trace("event.sourceElement attribute0, ID: " + imgId); trace("event.sourceElement attribute2, PATH: " + path);
- 	document.getElementById("slideshow").innerHTML = "<div class='item'><h1>SNYGGT!</h1><input type='submit' id='prevBTN' name='pic_id' value='" + imgId + "'>Previous</button><img id='slideshowimg " + imgId + "' src='" + path + "'><input type='submit' id='nextBTN' name='pic_id' value='" + imgId + "'>Next</button></div>";
- 	// addeventlistener prevBTN
-	var prev = document.getElementById("prevBTN");
-	prev.addEventListener("click", function(){prevImg(event);}, false);
- 	// addeventlistener nextBTN
- 	var next = document.getElementById("nextBTN");
- 	next.addEventListener("click", function(){nextImg(event);}, false);
- 	// trace("Previous is: " + prev); trace(prev); trace("Next is: " + next); trace(next);
-}//close show function
+function displayCurrentID() {
+	trace("displayCurrent har nu currentID: " + currentID);
+	
+	//update slideshow images src based on currentID:s value
+	document.getElementById('slideshowimg').src = images[currentID].children[0].innerHTML;
+	document.getElementById('deleteForm').innerHTML = "<input type='hidden' name='path' value='" + images[currentID].children[0].innerHTML + "'</input><button id='delete' type='submit' name='deleteID' value='" + images[currentID].getAttribute('id')  + "'><i class='fa fa-times fa-5x'></i></button>";
+	document.getElementById('delete').addEventListener("click", parseXML());
+}
 
 
-function nextImg(event) {
-	event.preventDefault();
-	trace("Nu har du startat nextIMG-funktionen.");
-	//var lastIdNumber = Number(imgId);
-	//var imgId = lastIdNumber + 1;
-	//document.getElementById("slideshow").innerHTML = "<div class='item'><h1>Bytt till nästa!</h1><form id='next'><button type='submit' value='hej'>Next</button></form><p>Next pic not loaded yet, but the id for it should be: " + imgId + "</p></div>";
-}//close nextImg function
+function nextImg() {
+	trace("nextIMG started.");
+	
+	// Update current img id value if you clicked next, if pics left in array
+	if (++currentID >= images.length) {
+		currentID = 0;
+	} // alternative code: if (currentID < images.length-2) { currentID++; } else { currentID = 0; }
+	displayCurrentID();
+}
 
 
-function prevImg(event) {
- 	event.preventDefault();
-	trace("Nu har du startat prevIMG-funktionen.");
-	//var lastIdNumber = Number(imgId);
-	//var imgId = lastIdNumber - 1;
-	//document.getElementById("slideshow").innerHTML = "<div class='item'><h1>Bytt till förra!</h1><form id='last'><button type='submit' value='hej'>Last</button></form><p>Previous pic not loaded yet, but the id for it should be: " + imgId + "</p></div>";
-}//close prevImg function
+function prevImg() {
+	trace("prevImg started.");
+	
+	// Update current img id value if you clicked prev, if pics left in array
+	if (--currentID < 0) {
+		currentID = images.length-1;
+	}
+	displayCurrentID();
+}
+
+
+// When pressed play btn - start timer/play slideshow
+function play() {
+	trace("playfunction started.");
+	timer = setInterval("nextImg()",1500);
+}
+
+
+// When pressed pause, stop timer/slideshow
+function pause() {
+	trace("pausefunction started.");
+ 	if (timer) {
+       // stop 
+       clearInterval( timer );
+       timer=null;
+    }
+}
+
+
+// If slideshow img is pressed, start timer to play slideshow. if it is already playing while clicked, stop timer/slideshow
+function slide(){
+    if (timer) {
+       // stop 
+       clearInterval( timer );
+       timer=null;
+    }
+    else {
+       timer = setInterval("nextImg()",1500);
+    }
+}
 
